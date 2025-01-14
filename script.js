@@ -105,5 +105,44 @@ products.forEach(({ name, id, price, category }) => {
 
 // a class is like a blueprint for creating objects. It allows you to define a set of properties and methods, and instantiate (or create) new objects with those properties and methods.
 class ShoppingCart {
+  // the constructor method is a special method for creating and initializing an object created with a class. It is a great place to initialize the properties of the class.
+  // It is called when the new instance of the class is instantiated.
+  constructor() {
+    // this keyword is used to refer to the current instance (object) of the class being created.
+    // ex: this.propertyName = value means that "For this object I'm creating, set the property called propertyName to the specified value."
+    this.items = [];
+    this.total = 0;
+    this.taxRate = 8.25;
+  }
 
-};
+  addItem(id, products) {
+    // find the product id the user added in the products array using .find()
+    const product = products.find((item) => item.id === id);
+    // destructuring to extract name and price variables from product.
+    const { name, price } = product;
+    this.items.push(product);
+
+    const totalCountPerProduct = {};
+    this.items.forEach((dessert) => {
+      // Wrap the right-hand totalCountPerProduct[dessert.id] in parentheses, and add || 0 to the end of the expression in case the item is not in the object yet meaning it is undefined resulting in NaN when trying to add 1 to it.
+      totalCountPerProduct[dessert.id] =
+        (totalCountPerProduct[dessert.id] || 0) + 1;
+    });
+
+    const currentProductCount = totalCountPerProduct[product.id];
+    const currentProductCountSpan = document.getElementById(
+      `product-count-for-id${id}`
+    );
+
+    currentProductCount > 1
+      ? (currentProductCountSpan.textContent = `${currentProductCount}x`)
+      : (productsContainer.innerHTML += `
+      <div id="dessert${id}" class="product">
+        <p>
+          <span class="product-count" id="product-count-for-id${id}"></span>${name}
+        </p>
+        <p>${price}</p>
+      </div>
+      `);
+  }
+}
