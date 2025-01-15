@@ -145,4 +145,25 @@ class ShoppingCart {
       </div>
       `);
   }
-}
+
+  getCounts() {
+    return this.items.length;
+  }
+};
+
+// instantiating a new ShoppingCart object meaning creating a new object based on the ShoppingCart class.
+const cart = new ShoppingCart();
+const addToCartBtns = document.getElementsByClassName("add-to-cart-btn");
+// converting the HTMLCollection to an array using the spread operator as the getElementsByClassName() returns an HTMLCollection which does not have the forEach method.
+[...addToCartBtns].forEach((btn) =>
+  btn.addEventListener("click", (event) => {
+    cart.addItem(Number(event.target.id), products);
+    totalNumberOfItems.textContent = cart.getCounts();
+  })
+);
+
+cartBtn.addEventListener("click", () => {
+  isCartShowing = !isCartShowing;
+  showHideCartSpan.textContent = isCartShowing ? "Hide" : "Show";
+  cartContainer.style.display = isCartShowing ? "block" : "none";
+});
