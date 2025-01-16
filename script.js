@@ -150,6 +150,26 @@ class ShoppingCart {
     return this.items.length;
   }
 
+  clearCart() {
+    if (!this.items.length) {
+      alert("Your cart is already empty!");
+      return;
+    }
+    // confirm() is a browser built-in function that prompt to the user. confirm() accepts a string, which is the message displayed to the user and returns true if the user confirms, else false if the user cancels.
+    const isCartCleared = confirm(
+      "Are you sure you want to clear all items from your shopping cart?"
+    );
+    if (isCartCleared) {
+      this.items = [];
+      this.total = 0;
+      productsContainer.innerHTML = "";
+      totalNumberOfItems.textContent = 0;
+      cartSubTotal.textContent = 0;
+      cartTaxes.textContent = 0;
+      cartTotal.textContent = 0;
+    }
+  }
+
   calculateTaxes(amount) {
     return parseFloat(((this.taxRate / 100) * amount).toFixed(2));
   }
@@ -158,9 +178,13 @@ class ShoppingCart {
   calculateTotal() {
     const subTotal = this.items.reduce((total, item) => total + item.price, 0);
     const tax = this.calculateTaxes(subTotal);
-    return this.total = subTotal + tax;
+    this.total = subTotal + tax;
+    cartSubTotal.textContent = `$${subTotal.toFixed(2)}`;
+    cartTaxes.textContent = `$${tax.toFixed(2)}`;
+    cartTotal.textContent = `$${this.total.toFixed(2)}`;
+    return this.total;
   }
-};
+}
 
 // instantiating a new ShoppingCart object meaning creating a new object based on the ShoppingCart class.
 const cart = new ShoppingCart();
@@ -170,11 +194,17 @@ const addToCartBtns = document.getElementsByClassName("add-to-cart-btn");
   btn.addEventListener("click", (event) => {
     cart.addItem(Number(event.target.id), products);
     totalNumberOfItems.textContent = cart.getCounts();
+    cart.calculateTotal();
   })
 );
 
 cartBtn.addEventListener("click", () => {
+  // !isCartShowing means invert the value of isCartShowing with the ! operator
   isCartShowing = !isCartShowing;
   showHideCartSpan.textContent = isCartShowing ? "Hide" : "Show";
   cartContainer.style.display = isCartShowing ? "block" : "none";
 });
+
+// bind() is a method that creates a new function that, when called, has its this keyword set to the provided value.
+// used bind() to bind the clearCart method to the cart object so that the this keyword in the clearCart method refers to the cart object.
+clearCartBtn.addEventListener("click", cart.clearCart.bind(cart));
